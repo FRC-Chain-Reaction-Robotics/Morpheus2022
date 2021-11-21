@@ -4,16 +4,10 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.button.POVButton;
-import frc.robot.subsystems.Lift;
+import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.wpilibj2.command.*;
+import edu.wpi.first.wpilibj2.command.button.*;
+import frc.robot.subsystems.*;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -24,10 +18,10 @@ import frc.robot.subsystems.Lift;
  */
 public class RobotContainer {
 	// The robot's subsystems and commands are defined here...
-	Compressor compressor = new Compressor();
 	Lift atlas = new Lift();
+	Gun gun = new Gun();
+
 	XboxController controller = new XboxController(0);
-	Solenoid solenoid = new Solenoid(0);
 
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -45,13 +39,13 @@ public class RobotContainer {
 	 * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
 	 */
 	private void configureButtonBindings() {
-		(new POVButton(controller, 0).whileActiveContinuous(new RunCommand(() -> atlas.set(0.5), atlas))
-				.or(new POVButton(controller, 180).whileActiveContinuous(new RunCommand(() -> atlas.set(-0.5), atlas))))
-						.whenInactive(new InstantCommand(() -> atlas.set(0.0), atlas));
+		new POVButton(controller, 0).whileActiveContinuous(new RunCommand(() -> atlas.set(0.5), atlas))
+			.or(new POVButton(controller, 180).whileActiveContinuous(new RunCommand(() -> atlas.set(-0.5), atlas)))
+			.whenInactive(new InstantCommand(() -> atlas.set(0.0), atlas));
 
 		new JoystickButton(controller, XboxController.Button.kA.value)
-				.whenPressed(new RunCommand(() -> solenoid.set(true)))
-				.whenReleased(new RunCommand(() -> solenoid.set(false)));
+			.whenPressed(new RunCommand(() -> gun.set(true)))
+			.whenReleased(new RunCommand(() -> gun.set(false)));
 	}
 
 	/**
